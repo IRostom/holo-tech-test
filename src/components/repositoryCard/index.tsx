@@ -13,30 +13,25 @@ export const RepositoryCard = ({ repo }: { repo: Repository }) => {
     >
       <h3>{repo.name}</h3>
       <p>{repo.description}</p>
-      <span className="github-card__meta">
-        <span className="github-card__language-icon" style={{ color: 'green' }}>
-          ●
-        </span>{' '}
-        {repo.language}
-      </span>
-      <span className="github-card__meta">
-        <i className="fa fa-star" aria-hidden="true"></i>
-        <FontAwesomeIcon icon={faStar} />
-        <span>
-          <i className="fa fa-spinner" aria-hidden="true">
-            {repo.stargazers_count}
-          </i>
+      <div className="github-card__meta-list">
+        <span className="github-card__meta">
+          <span
+            className="github-card__language-icon"
+            style={{ color: 'green' }}
+          >
+            ●
+          </span>{' '}
+          {repo.language}
         </span>
-      </span>
-      <span className="github-card__meta">
-        <i className="fa fa-code-fork" aria-hidden="true">
+        <span className="github-card__meta">
+          <FontAwesomeIcon icon={faStar} />
+          <span>{repo.stargazers_count}</span>
+        </span>
+        <span className="github-card__meta">
           <FontAwesomeIcon icon={faCodeFork} />
           {repo.forks_count}
-        </i>
-        <span>
-          <i className="fa fa-spinner" aria-hidden="true"></i>
         </span>
-      </span>
+      </div>
     </a>
   );
 };
