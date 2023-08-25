@@ -125,7 +125,7 @@ function Home() {
       />
       <GridResult result={result} filterType={filterType} />
       {isLoading && <p>Loading...</p>}
-      {<div className="scroll-target" ref={observerTarget}></div>}
+      <div className="scroll-target" ref={observerTarget}></div>
     </div>
   );
 }
