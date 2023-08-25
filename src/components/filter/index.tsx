@@ -5,7 +5,7 @@ import './filter.scss';
 export const Filter = ({
   handleSearch,
   handleFilterChange,
-  filterOptions,
+  filterOptions
 }: {
   handleSearch: DebouncedFunc<(query: string) => void>;
   handleFilterChange: (filterValue: string) => void;

@@ -11,15 +11,17 @@ export const GridResult = ({
 }) => {
   return (
     result && (
-      <ul className={`grid ${filterType === 'users' ? '' : 'grid-sm'}`}>
-        {result.items.map((item: User | Repository) =>
-          filterType === 'users' ? (
-            <UserCard key={item?.id} user={item as User} />
-          ) : (
-            <RepositoryCard repo={item as Repository} />
-          )
-        )}
-      </ul>
+      <>
+        <ul className={`grid ${filterType === 'users' ? '' : 'grid-sm'}`}>
+          {result?.items?.map((item: User | Repository) =>
+            filterType === 'users' ? (
+              <UserCard key={item?.id} user={item as User} />
+            ) : (
+              <RepositoryCard key={item?.id} repo={item as Repository} />
+            )
+          )}
+        </ul>
+      </>
     )
   );
 };

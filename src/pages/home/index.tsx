@@ -1,60 +1,106 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { debounce } from 'lodash';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateStoreData } from '../../store/querySlice';
+import { updateQueryList, setQuery } from '../../store/querySlice';
 import { GridResult } from '../../components';
 import { Filter } from '../../components/filter';
 import { filterOptions } from '../../constants';
 import './home.scss';
 
 function Home() {
+  const observerTarget = useRef(null);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [filterType, setFilterType] = useState<string>('users');
-  const [result, setResult] = useState<any>(undefined);
-
+  const [page, setPage] = useState<number>(1);
+  const [result, setResult] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const dispatch = useDispatch();
   const cache = useSelector((state: any) => state.query);
 
-  const handleSearch = debounce((query: string) => {
+  const handleTextChange = debounce((query: string) => {
     if (query.length <= 3) {
       setResult(undefined);
+      setPage(1);
       return setSearchTerm('');
     }
 
-    console.log('====>', query);
+    // console.log('====>', query);
 
     setSearchTerm(query);
   }, 500);
 
-  const handleFilterChange = (v: string) => {
-    console.log('filter type changed to: ', v);
-    setFilterType(v);
+  const search = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(
+        `https://api.github.com/search/${filterType}?q=${searchTerm}&page=${page}`
+      );
+      const data = await response.json();
+
+      setResult((oldResult: any) => {
+        return oldResult
+          ? {
+              ...oldResult,
+              items: [...(oldResult.items ?? []), ...(data?.items ?? [])],
+            }
+          : data;
+      });
+
+      if (page > 1) {
+        dispatch(
+          updateQueryList({
+            searchQuery: searchTerm,
+            filterOption: filterType,
+            data,
+          })
+        );
+      } else
+        dispatch(
+          setQuery({
+            searchQuery: searchTerm,
+            filterOption: filterType,
+            data,
+          })
+        );
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  async function search() {
-    const response = await fetch(
-      `https://api.github.com/search/${filterType}?q=${searchTerm}`
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries: any) => {
+        if (entries[0].isIntersecting && result) {
+          setPage((p) => {
+            return p + 1;
+          });
+        }
+      },
+      { threshold: 1 }
     );
-    const data = await response.json();
-    setResult(data);
-    dispatch(
-      updateStoreData({
-        searchQuery: searchTerm,
-        filterOption: filterType,
-        data,
-      })
-    );
-  }
+
+    if (observerTarget.current) {
+      observer.observe(observerTarget.current);
+    }
+
+    return () => {
+      if (observerTarget.current) {
+        observer.unobserve(observerTarget.current);
+      }
+    };
+  }, [observerTarget, result, setPage]);
 
   useEffect(() => {
     if (
-      searchTerm.length > 3 &&
+      searchTerm.length >= 3 &&
       (searchTerm !== cache?.searchQuery || filterType !== cache?.filterOption)
     ) {
       search();
     } else if (
-      searchTerm.length > 3 &&
+      searchTerm.length >= 3 &&
       searchTerm === cache?.searchQuery &&
       filterType === cache?.filterOption
     ) {
@@ -62,14 +108,24 @@ function Home() {
     }
   }, [searchTerm, filterType]);
 
+  useEffect(() => {
+    if (page > 1) {
+      search();
+    }
+  }, [page]);
+
   return (
     <div className="app">
       <Filter
-        handleSearch={handleSearch}
-        handleFilterChange={handleFilterChange}
+        handleSearch={handleTextChange}
+        handleFilterChange={(v) => {
+          setFilterType(v);
+        }}
         filterOptions={filterOptions}
       />
       <GridResult result={result} filterType={filterType} />
+      {isLoading && <p>Loading...</p>}
+      {<div className="scroll-target" ref={observerTarget}></div>}
     </div>
   );
 }

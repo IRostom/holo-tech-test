@@ -5,21 +5,24 @@ import { Users } from '../interfaces/user.interface';
 interface UserState {
   searchQuery: string;
   filterOption: string;
-  data: Array<Users | Repositories>;
+  data: Users | Repositories;
 }
 
 const initialState: UserState = {
   searchQuery: '',
   filterOption: '',
-  data: [],
+  data: {
+    incomplete_results: false,
+    total_count: 0,
+    items: [],
+  },
 };
 
 export const querySlice = createSlice({
   name: 'query',
   initialState,
   reducers: {
-    getStoreData: (state: any) => state,
-    updateStoreData: (state: any, action: PayloadAction<UserState>) => {
+    setQuery: (state: any, action: PayloadAction<UserState>) => {
       return {
         ...state,
         searchQuery: action.payload.searchQuery,
@@ -27,9 +30,12 @@ export const querySlice = createSlice({
         data: action.payload.data,
       };
     },
+    updateQueryList: (state: any, action: PayloadAction<UserState>) => {
+      state.data.items.push(...action?.payload?.data?.items);
+    },
   },
 });
 
-export const { updateStoreData, getStoreData } = querySlice.actions;
+export const { setQuery, updateQueryList } = querySlice.actions;
 
 export default querySlice.reducer;
