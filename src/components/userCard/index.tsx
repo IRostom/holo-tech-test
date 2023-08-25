@@ -17,7 +17,7 @@ export const UserCard = ({ user }: { user: User }) => {
             alt="github-logo"
           ></img>
         </a>
-        <div className="card-header">
+        <div>
           <div className="card-img-wrapper">
             <img
               src={`https://avatars.githubusercontent.com/${user.login}`}
@@ -38,23 +38,6 @@ export const UserCard = ({ user }: { user: User }) => {
             <a href="{user.html_url}" target="_blank" rel="noopener">
               @{user.login}
             </a>
-          </div>
-          <p className="card-desc">{user.id}</p>
-          <div className="card-footer">
-            <div className="footer-box">
-              <div className="box-wrapper">
-                <div className="count">{user.id}</div>
-                <div className="box-text">Followers</div>
-              </div>
-              <div className="box-wrapper">
-                <div className="count">{user.id}</div>
-                <div className="box-text">Following</div>
-              </div>
-              <div className="box-wrapper">
-                <div className="count">{user.id}</div>
-                <div className="box-text">Repositories</div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
