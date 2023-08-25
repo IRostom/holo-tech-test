@@ -24,10 +24,8 @@ function Home() {
       setPage(1);
       return setSearchTerm('');
     }
-
-    // console.log('====>', query);
-
     setSearchTerm(query);
+    setResult(undefined);
   }, 500);
 
   const search = async () => {
@@ -73,7 +71,11 @@ function Home() {
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries: any) => {
-        if (entries[0].isIntersecting && result) {
+        if (
+          entries[0].isIntersecting &&
+          result &&
+          result?.items?.length < result.total_count
+        ) {
           setPage((p) => {
             return p + 1;
           });
