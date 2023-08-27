@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { debounce } from 'lodash';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateQueryList, setQuery } from '../../store/querySlice';
-import { GridResult } from '../../components';
+import { GridResult, Loading } from '../../components';
 import { Filter } from '../../components/filter';
 import { filterOptions } from '../../constants';
 import './home.scss';
@@ -126,7 +126,7 @@ function Home() {
         filterOptions={filterOptions}
       />
       <GridResult result={result} filterType={filterType} />
-      {isLoading && <p>Loading...</p>}
+      {isLoading && <Loading />}
       <div className="scroll-target" ref={observerTarget}></div>
     </div>
   );
