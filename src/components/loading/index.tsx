@@ -1,4 +1,5 @@
-import 'loading.scss';
+import './loading.scss';
+
 export const Loading = () => {
   return (
     <div className="lds-ellipsis">

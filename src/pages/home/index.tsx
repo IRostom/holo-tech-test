@@ -7,13 +7,16 @@ import { GridResult, Loading } from '../../components';
 import { Filter } from '../../components/filter';
 import { filterOptions } from '../../constants';
 import './home.scss';
+import { Repositories, Users } from '../../interfaces';
 
 function Home() {
   const observerTarget = useRef(null);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [filterType, setFilterType] = useState<string>('users');
   const [page, setPage] = useState<number>(1);
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<Users | Repositories | undefined>(
+    undefined
+  );
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const dispatch = useDispatch();
   const cache = useSelector((state: any) => state.query);
@@ -125,7 +128,7 @@ function Home() {
         }}
         filterOptions={filterOptions}
       />
-      <GridResult result={result} filterType={filterType} />
+      {result && <GridResult result={result} filterType={filterType} />}
       {isLoading && <Loading />}
       <div className="scroll-target" ref={observerTarget}></div>
     </div>
